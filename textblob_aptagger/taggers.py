@@ -47,15 +47,18 @@ class PerceptronTagger(BaseTagger):
         prev, prev2 = self.START
         tokens = []
         for words in split_sents(corpus):
+            wrds, tgs = [], []
             context = self.START + [self._normalize(w) for w in words] + self.END
             for i, word in enumerate(words):
                 tag = self.tagdict.get(word)
                 if not tag:
                     features = self._get_features(i, word, context, prev, prev2)
                     tag = self.model.predict(features)
-                tokens.append((word, tag))
+                wrds.append(word)
+                tgs.append(tag)
                 prev2 = prev
                 prev = tag
+            tokens.append((wrds, tgs)) 
         return tokens
 
     def train(self, sentences, save_loc=None, nr_iter=5):
